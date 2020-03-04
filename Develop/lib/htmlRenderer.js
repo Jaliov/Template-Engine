@@ -1,9 +1,10 @@
 const path = require("path");
 const fs = require("fs");
 var Employee = require("./employee")
-var app = require("./app")
+var app = require("../app")
 
 const templatesDir = path.resolve(__dirname, "../templates");
+console.log(__dirname)
 
 const render = employees => {
   const html = [];
@@ -41,7 +42,7 @@ const renderEngineer = engineer => {
   template = replacePlaceholders(template, "role", engineer.getRole());
   template = replacePlaceholders(template, "email", engineer.getEmail());
   template = replacePlaceholders(template, "id", engineer.getId());
-  template = replacePlaceholders(template, "github", engineer.getGithub());
+  template = replacePlaceholders(template, "gitName", engineer.getGithub());
   return template;
 };
 
@@ -51,7 +52,7 @@ const renderIntern = intern => {
   template = replacePlaceholders(template, "role", intern.getRole());
   template = replacePlaceholders(template, "email", intern.getEmail());
   template = replacePlaceholders(template, "id", intern.getId());
-  template = replacePlaceholders(template, "school", intern.getSchool());
+  template = replacePlaceholders(template, "internSchool", intern.getSchool());
   return template;
 };
 

@@ -1,13 +1,13 @@
 const inquirer = require("inquirer")
-const Employee = require("./employee")
-const Intern = require("./intern")
-const Engineer = require("./engineer");
-const Manager = require("./manager")
+const Employee = require("./lib/employee")
+const Intern = require("./lib/intern")
+const Engineer = require("./lib/engineer");
+const Manager = require("./lib/manager")
 const fs = require('fs');
 const util = require("util");
+const jest = require("jest")
 
-//const main = require("./main")
-//const render = require('./htmlRenderer')
+const render = require('./lib/htmlRenderer')
 
 var employees = [];
 var listManager
@@ -18,7 +18,12 @@ const writeFileAsync = util.promisify(fs.writeFile);
 
 function promptUser() {
   return inquirer.prompt([{
-
+        type: "list",
+        name: "role",
+        message: "What type of team member are you?",
+        choices: ["manager","engineer", "intern"]
+      },
+    {
       type: "input",
       message: "What is your name?",
       name: "name"
@@ -39,18 +44,6 @@ function promptUser() {
       name: "email"
     },
     {
-      type: "input",
-      message: "What is your role?",
-      name: "role"
-    },
-    {
-      when: function (answers) {
-        return answers.role === "intern"
-      },
-      default: "What school did you go to?",
-      name: "internSchool"
-    },
-    {
       when: function (answers) {
         return answers.role === "manager"
       },
@@ -63,11 +56,17 @@ function promptUser() {
       },
       default: "What is your GitHub user name",
       name: "gitName"
+    },
+    {
+      when: function (answers) {
+        return answers.role === "intern"
+      },
+      default: "What school did you go to?",
+      name: "internSchool"
     }
+  ]);
 
-  ])
-}
-
+  }
 
 function generateHTML(answers) {
   if(answers.role === 'manager') {
@@ -168,16 +167,17 @@ promptUser()
     const html = generateHTML(answers);
     if (answers.role === "manager") {
       listManager = new Manager(answers.name, answers.id, answers.title, answers.email, answers.role, answers.officeNumber)
+      console.log(listManager.getName())
       employees.push(listManager);
-      return writeFileAsync("manager.html", html)
+      return writeFileAsync("./templates/manager.html", html)
     } else if (answers.role === "intern") {
       listIntern = new Intern(answers.name, answers.id, answers.title, answers.email, answers.role, answers.internSchool)
       employees.push(listIntern);
-      return writeFileAsync("intern.html", html)
+      return writeFileAsync("./templates/intern.html", html)
     } else if (answers.role === "engineer") {
       listEngineer = new Engineer(answers.name, answers.id, answers.title, answers.email, answers.role, answers.gitName)
       employees.push(listEngineer);
-      return writeFileAsync("engineer.html", html)
+      return writeFileAsync("./templates/engineer.html", html)
     } //else {
      // writeFileAsync("main.html", html)
    // }
@@ -190,6 +190,7 @@ promptUser()
   }).catch(function (err) {
     console.log(err);
   })
-//render(answers);
+render;
+
 
 module.exports = promptUser;
